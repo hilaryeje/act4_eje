@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Student;
 
 class PostController extends Controller
 {
@@ -14,10 +14,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        $data = Post::latest()->paginate(5);
-    
-        return view('posts.index',compact('data'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+        $students = Student::all()->toArray();
+        return view('posts.index', compact('students'));
     }
 
     /**
@@ -38,70 +36,71 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-         $request->validate([
-            'title' => 'required',
-            'description' => 'required',
+        $this->validate($request, [
+            'first_name'    =>  'required',
+            'last_name'     =>  'required'
         ]);
-    
-        Post::create($request->all());
-     
-        return redirect()->route('posts.index')
-                        ->with('success','Post created successfully.');
+        $student = new Student([
+            'first_name'    =>  $request->get('first_name'),
+            'last_name'     =>  $request->get('last_name')
+        ]);
+        $student->save();
+        return redirect()->route('posts.index')->with('success', 'Data Added');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Post  $post
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show($id)
     {
-        return view('posts.show',compact('post'));
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Post  $post
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit($id)
     {
-        return view('posts.edit',compact('post'));
+        $student = Student::find($id);
+        return view('posts.edit', compact('student', 'id'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
+        $this->validate($request, [
+            'first_name'    =>  'required',
+            'last_name'     =>  'required'
         ]);
-    
-        $post->update($request->all());
-    
-        return redirect()->route('posts.index')
-                        ->with('success','Post updated successfully');
+        $student = Student::find($id);
+        $student->first_name = $request->get('first_name');
+        $student->last_name = $request->get('last_name');
+        $student->save();
+        return redirect()->route('posts.index')->with('success', 'Data Updated');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Post  $post
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-        $post->delete();
-    
-        return redirect()->route('posts.index')
-                        ->with('success','Post deleted successfully');
+        $student = Student::find($id);
+        $student->delete();
+        return redirect()->route('posts.index')->with('success', 'Data Deleted');
     }
 }

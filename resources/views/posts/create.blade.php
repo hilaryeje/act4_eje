@@ -1,48 +1,38 @@
-@extends('posts.layout')
-  
+@extends('master')
+
 @section('content')
 <div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Add New Student</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('posts.index') }}"> Back</a>
-        </div>
-    </div>
+ <div class="col-md-12">
+  <br />
+  <h3 aling="center">Add Data</h3>
+  <br />
+  @if(count($errors) > 0)
+  <div class="alert alert-danger">
+   <ul>
+   @foreach($errors->all() as $error)
+    <li>{{$error}}</li>
+   @endforeach
+   </ul>
+  </div>
+  @endif
+  @if(\Session::has('success'))
+  <div class="alert alert-success">
+   <p>{{ \Session::get('success') }}</p>
+  </div>
+  @endif
+
+  <form method="post" action="{{url('posts.index')}}">
+   {{csrf_field()}}
+   <div class="form-group">
+    <input type="text" name="first_name" class="form-control" placeholder="Enter First Name" />
+   </div>
+   <div class="form-group">
+    <input type="text" name="last_name" class="form-control" placeholder="Enter Last Name" />
+   </div>
+   <div class="form-group">
+    <input type="submit" class="btn btn-primary" />
+   </div>
+  </form>
+ </div>
 </div>
-   
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <strong>Whoops!</strong> There were some problems with your input.<br><br>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-   
-<form action="{{ route('posts.store') }}" method="POST">
-    @csrf
-  
-     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Student Number:</strong>
-                <input type="text" name="title" class="form-control" placeholder="Enter Student Number">
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Details:</strong>
-                <textarea class="form-control" style="height:150px" name="description" placeholder="Enter Student Details"></textarea>
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-    </div>
-   
-</form>
 @endsection

@@ -14,7 +14,9 @@ class CreatePostTbl extends Migration
     public function up()
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
+            $table->string('first_name'); //varchar(255)
+            $table->string('last_name');
             $table->timestamps();
         });
     }

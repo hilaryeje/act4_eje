@@ -1,46 +1,58 @@
-@extends('posts.layout')
- 
+@extends('master')
+
 @section('content')
-    <div class="row" style="margin-top: 5rem;">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>STUDENT LOGS</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-success" href="{{ route('posts.create') }}"> Add New Student</a>
-            </div>
-        </div>
-    </div>
-   
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
-   
-    <table class="table table-bordered">
-        <tr>
-            <th>No</th>
-            <th>Name</th>
-            <th>Details</th>
-            <th width="280px">Action</th>
-        </tr>
-        @foreach ($data as $key => $value)
-        <tr>
-            <td>{{ ++$i }}</td>
-            <td>{{ $value->title }}</td>
-            <td>{{ \Str::limit($value->description, 100) }}</td>
-            <td>
-                <form action="{{ route('posts.destroy',$value->id) }}" method="POST">   
-                    <a class="btn btn-info" href="{{ route('posts.show',$value->id) }}">Show</a>    
-                    <a class="btn btn-primary" href="{{ route('posts.edit',$value->id) }}">Edit</a>   
-                    @csrf
-                    @method('DELETE')      
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
-    </table>  
-    {!! $data->links() !!}      
+
+<div class="row">
+ <div class="col-md-12">
+  <br />
+  <h3 align="center">Student Data</h3>
+  <br />
+  @if($message = Session::get('success'))
+  <div class="alert alert-success">
+   <p>{{$message}}</p>
+  </div>
+  @endif
+  <div align="right">
+   <a href="{{route('posts.create')}}" class="btn btn-primary">Add</a>
+   <br />
+   <br />
+  </div>
+  <table class="table table-bordered table-striped">
+   <tr>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Edit</th>
+    <th>Delete</th>
+   </tr>
+   @foreach($students as $row)
+   <tr>
+    <td>{{$row['first_name']}}</td>
+    <td>{{$row['last_name']}}</td>
+    <td><a href="{{action('PostController@edit', $row['id'])}}" class="btn btn-warning">Edit</a></td>
+    <td>
+     <form method="post" class="delete_form" action="{{action('PostController@destroy', $row['id'])}}">
+      {{csrf_field()}}
+      <input type="hidden" name="_method" value="DELETE" />
+      <button type="submit" class="btn btn-danger">Delete</button>
+     </form>
+    </td>
+   </tr>
+   @endforeach
+  </table>
+ </div>
+</div>
+<script>
+$(document).ready(function(){
+ $('.delete_form').on('submit', function(){
+  if(confirm("Are you sure you want to delete it?"))
+  {
+   return true;
+  }
+  else
+  {
+   return false;
+  }
+ });
+});
+</script>
 @endsection
